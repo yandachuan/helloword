@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hello.dal.config.mapper.UserDOMapper">
+    <!-- 自动生成,请修改 USER.xml -->
+    <resultMap id="BaseResultMap"  type="com.hello.api.dto.UserDTO">
+        <result column="PHOTO" property="photo" jdbcType="VARCHAR" javaType="String"/>
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR" javaType="String"/>
+        <result column="USERNAME" property="username" jdbcType="VARCHAR" javaType="String"/>
+        <result column="USER_ID" property="userId" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="REG_TIME" property="regTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+
+    <sql id="Base_SF_Column_List">
+        sf.PHOTO,sf.PASSWORD,sf.USERNAME,sf.USER_ID,sf.REG_TIME
+    </sql>
+    <sql id="Base_Column_List">
+        PHOTO,PASSWORD,USERNAME,USER_ID,REG_TIME
+    </sql>
+
+
+    <!--插入表:user-->
+    <insert id="insert"  >
+<!--        <selectKey resultType="java.lang.Long" keyProperty="userId" order="AFTER">-->
+<!--            SELECT-->
+<!--            LAST_INSERT_ID()-->
+<!--        </selectKey>-->
+        <![CDATA[
+        INSERT INTO user(
+            PHOTO
+            ,PASSWORD
+            ,USERNAME
+            ,REG_TIME
+        )VALUES(
+             #{photo,jdbcType=VARCHAR}
+            , #{password,jdbcType=VARCHAR}
+            , #{username,jdbcType=VARCHAR}
+            , #{regTime,jdbcType=TIMESTAMP}
+        )
+        ]]>
+    </insert>
+
+    <!--批量插入表:user-->
+    <insert id="insertBatch"  >
+        INSERT INTO user(
+            PHOTO
+            ,PASSWORD
+            ,USERNAME
+            ,USER_ID
+            ,REG_TIME
+        )VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                 #{item.photo,jdbcType=VARCHAR}
+                , #{item.password,jdbcType=VARCHAR}
+                , #{item.username,jdbcType=VARCHAR}
+                , #{item.userId,jdbcType=INTEGER}
+                , #{item.regTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+
+    <!--更新表:user-->
+    <update id="update"  >
+        <![CDATA[
+        UPDATE /*MS-USER-UPDATE*/ user
+        SET
+            PHOTO           = #{photo,jdbcType=VARCHAR}
+            ,PASSWORD        = #{password,jdbcType=VARCHAR}
+            ,USERNAME        = #{username,jdbcType=VARCHAR}
+        WHERE
+            USER_ID         = #{userId,jdbcType=INTEGER}
+        ]]>
+        <!--  ,REG_TIME        = #{regTime,jdbcType=TIMESTAMP}-->
+    </update>
+
+    <!--根据主键删除数据:user-->
+    <delete id="deleteByUserId"  >
+        <![CDATA[
+        DELETE /*MS-USER-DELETEBYUSERID*/ FROM user
+        WHERE
+            USER_ID = #{userId,jdbcType=INTEGER}
+        ]]>
+    </delete>
+
+    <!--根据主键获取数据:user-->
+    <select id="getByUserId" resultMap="BaseResultMap" >
+        SELECT /*MS-USER-GETBYUSERID*/  <include refid="Base_Column_List" />
+        FROM user
+        WHERE
+        <![CDATA[
+            USER_ID = #{userId,jdbcType=INTEGER}
+        ]]>
+    </select>
+    <select id="findUserList" resultMap="BaseResultMap" >
+        SELECT /*MS-USER-GETBYUSERID*/  <include refid="Base_Column_List" />
+        FROM user
+    </select>
+</mapper>

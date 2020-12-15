@@ -1,0 +1,89 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="user" physicalName="user" remark="USER">
+    <!--  特殊字符说明 &lt;&gt; <> -->
+    <!-- baseSql option中 select * 会自动替换为 include -->
+    <sql id="Base_Column_List">
+        PHOTO,PASSWORD,USERNAME,USER_ID,REG_TIME
+    </sql>
+
+    <!-- baseSql option中 select sf.* 会自动替换为 include -->
+    <sql id="Base_SF_Column_List">
+        sf.PHOTO,sf.PASSWORD,sf.USERNAME,sf.USER_ID,sf.REG_TIME
+    </sql>
+
+    <operation name="insert" paramtype="object" remark="插入表:user">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        <![CDATA[
+        INSERT INTO user(
+            PHOTO
+            ,PASSWORD
+            ,USERNAME
+            ,USER_ID
+            ,REG_TIME
+        )VALUES(
+             #{photo,jdbcType=VARCHAR}
+            , #{password,jdbcType=VARCHAR}
+            , #{username,jdbcType=VARCHAR}
+            , #{userId,jdbcType=INTEGER}
+            , #{regTime,jdbcType=TIMESTAMP}
+        )
+        ]]>
+    </operation>
+
+    <!-- foreach 可以自定义类型，paramtype="primitive" foreach->javatype="自己书写的类"  -->
+    <!-- 只有一个参数且为List时必须将参数命名为list -->
+    <operation name="insertBatch" paramtype="objectList" remark="批量插入表:user">
+        INSERT INTO user(
+            PHOTO
+            ,PASSWORD
+            ,USERNAME
+            ,USER_ID
+            ,REG_TIME
+        )VALUES
+        <foreach collection="list"  item="item" separator=",">
+            (
+                 #{item.photo,jdbcType=VARCHAR}
+                , #{item.password,jdbcType=VARCHAR}
+                , #{item.username,jdbcType=VARCHAR}
+                , #{item.userId,jdbcType=INTEGER}
+                , #{item.regTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </operation>
+
+<!--     不推荐使用全 update 有需要自己打开-->
+    <operation name="update" paramtype="object" remark="更新表:user">
+        <![CDATA[
+        UPDATE user
+        SET
+            PHOTO           = #{photo,jdbcType=VARCHAR}
+            ,PASSWORD        = #{password,jdbcType=VARCHAR}
+            ,USERNAME        = #{username,jdbcType=VARCHAR}
+
+        WHERE
+            USER_ID         = #{userId,jdbcType=INTEGER}
+        ]]>
+        <!--  ,REG_TIME        = #{regTime,jdbcType=TIMESTAMP}-->
+    </operation>
+
+    <operation name="deleteByUserId"  remark="根据主键删除数据:user">
+        <![CDATA[
+        DELETE FROM user
+        WHERE
+            USER_ID = #{userId,jdbcType=INTEGER}
+        ]]>
+    </operation>
+
+    <operation name="getByUserId" multiplicity="one" remark="根据主键获取数据:user">
+        SELECT *
+        FROM user
+        WHERE
+        <![CDATA[
+            USER_ID = #{userId,jdbcType=INTEGER}
+        ]]>
+    </operation>
+
+</table>
